@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+Joi.objectID = require('joi-objectid')(Joi)
 const courseSchema = new mongoose.Schema({
     title : {type : String, required :true},
-    author : String,
+    author : { id : { type: mongoose.Schema.Types.ObjectId , ref : 'Author'},
+                name : String},
     tags : {type :[String], validate : {  validator: function(v){
         return v.length > 0
     }, message : 'Course Tags must contains at least one tag.'}},
@@ -13,7 +15,7 @@ const courseSchema = new mongoose.Schema({
 
 let course_validation_schema = Joi.object({
     title : Joi.string().min(5).required(),
-    author : Joi.string().min(5).max(30).required(),
+    author : { id: Joi.objectID() , name : Joi.string().min(5).max(30)},
     tags : Joi.array().items(Joi.string().min(2)),
     price : Joi.number().positive(),
     isPublished : Joi.boolean()
@@ -24,7 +26,7 @@ function course_validation(body) {
 
 let course_validation_update_schema = Joi.object({
     title : Joi.string().min(5),
-    author : Joi.string().min(5).max(30),
+    author : { id: Joi.objectID() , name : Joi.string().min(5).max(30)},
     tags : Joi.array().items(Joi.string().min(2)),
     price : Joi.number().positive(),
     isPublished : Joi.boolean()
