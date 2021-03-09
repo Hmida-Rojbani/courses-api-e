@@ -10,7 +10,7 @@ router.get('/:id', async (req,res)=>{
     let course = await Course.findById(req.params.id);
     if(!course)
         return res.status(404).send('Id not found')
-    res.send();
+    res.send(course);
 });
 
 router.post('', async (req,res) => {
@@ -23,5 +23,17 @@ router.post('', async (req,res) => {
     res.status(201).send(course);
 });
 
+router.put('/:id', async (req,res)=>{
+    let course = await Course.findById(req.params.id);
+    if(!course)
+        return res.status(404).send('Id not found')
+    /* if(req.body.title)
+        course.title = req.body.title;
+    if(req.body.author)
+        course.author = req.body.author; */
+    course = _.merge(course,req.body);
+    course = await course.save();
+    res.send(course);
+});
 
 module.exports = router
