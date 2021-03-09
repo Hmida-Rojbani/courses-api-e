@@ -19,7 +19,12 @@ router.post('', async (req,res) => {
         author : req.body.author
     }); */
     let course = new Course(_.pick(req.body,['title','author','price','tags','isPublished']));
-    course = await course.save();
+    try {
+        course = await course.save();
+    } catch (error) {
+        return res.status(400).send(error.message)
+    }
+    
     res.status(201).send(course);
 });
 
