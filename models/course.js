@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
 const courseSchema = new mongoose.Schema({
     title : {type : String, required :true},
     author : String,
@@ -10,6 +11,29 @@ const courseSchema = new mongoose.Schema({
     isPublished : Boolean
 });
 
+let course_validation_schema = Joi.object({
+    title : Joi.string().min(5).required(),
+    author : Joi.string().min(5).max(30).required(),
+    tags : Joi.array().items(Joi.string().min(2)),
+    price : Joi.number().positive(),
+    isPublished : Joi.boolean()
+})
+function course_validation(body) {
+    return course_validation_schema.validate(body);
+}
+
+let course_validation_update_schema = Joi.object({
+    title : Joi.string().min(5),
+    author : Joi.string().min(5).max(30),
+    tags : Joi.array().items(Joi.string().min(2)),
+    price : Joi.number().positive(),
+    isPublished : Joi.boolean()
+})
+function course_validation_update(body) {
+    return course_validation_update_schema.validate(body);
+}
 const Course = mongoose.model('Course', courseSchema);
 
-module.exports = Course;
+module.exports.Course = Course;
+module.exports.course_validation = course_validation;
+module.exports.course_validation_update = course_validation_update;
