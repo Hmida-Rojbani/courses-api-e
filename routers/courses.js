@@ -36,4 +36,11 @@ router.put('/:id', async (req,res)=>{
     res.send(course);
 });
 
+router.delete('/:id', async (req,res)=>{
+    let course = await Course.findByIdAndDelete(req.params.id);
+    if(!course)
+        return res.status(404).send('Id not found')
+    res.send(course)
+})
+
 module.exports = router
